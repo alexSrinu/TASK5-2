@@ -1,0 +1,270 @@
+﻿@model List<task5.Models.Details>
+
+@{
+    ViewBag.Title = "GetDetails";
+    Layout = "~/Views/_LayoutPage1.cshtml";
+    <script src="~/Scripts/jquery-3.7.1.js"></script>
+    <link href="~/Content/StyleSheet1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/umd/popper.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+}
+
+<h2>GetDetails</h2>
+@Html.ActionLink("Create", "Index")
+
+@TempData["Success"]
+
+@using (Html.BeginForm("GetDetails", "Details", FormMethod.Get))
+{
+    @*<b> Search by</b> @Html.RadioButton("searchby", "Name", true)<b> Name</b>
+
+            <br />
+
+            @Html.TextBox("search")
+            <input type="submit" value=" Search" />
+        <div class="form-group">
+            <label for="searchName">Search by Name:</label>
+            <input type="text" class="form-control" id="searchName" name="searchstring" placeholder="Enter name">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>*@
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mx-auto">
+
+                <div class="form-group">
+                    <label for="searchName">Search by Name:</label>
+                    <input type="text" class="form-control" id="searchName" name="searchstring" placeholder="Enter name">
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </div>
+
+
+    <h2>Details</h2>
+
+
+
+    <div>
+        @foreach (var state in ViewBag.States)
+        {
+            <label>
+                <input type="checkbox" class="state-checkbox" value="@state.StateName" /> @state.StateName
+            </label><br />
+            <div class="city-container" id="cities-@state.StateName" style="display:none;">
+               
+            </div>
+        }
+    </div>
+
+
+    @* <div>
+            @foreach (var state in ViewBag.States)
+            {
+                <label>
+                    <input type="checkbox" value="@state.StateName" /> @state.StateName
+                </label><br />
+
+
+
+            }
+        </div>
+        <div>
+
+        </div>*@
+
+
+
+
+    <div class="container mt-4">
+        <table class="table table-bordered table-striped" style=" w-75">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>State</th>
+                    <th>City</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>@user.Mobile</td>
+                        <td>@user.StateName</td>
+                        <td>@user.CityName</td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = user.Id })" class="btn btn-warning btn-sm" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(@user.Id)">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            alert("succes")
+            let isProcessing = false;
+   
+
+        // Handle state checkbox change
+        $('.state-checkbox').on('change', function () {
+            if (isProcessing) return;
+
+            isProcessing = true;
+
+            var stateName = $(this).val();
+            var isChecked = $(this).is(':checked');
+
+        if (isChecked) {
+            alert("succes")
+
+                $.ajax({
+                    url: '@Url.Action("GetDetails", "Details")',
+                    type: 'GET',
+                    data: {
+                        StateName: stateName
+                    },
+                    success: function (data) {
+
+                        var cityContainer = $('#cities-' + stateName);
+                        cityContainer.empty();
+
+                        $.each(data, function (index, city) {
+                            cityContainer.append(
+                                '<label>' +
+                                    '<input type="checkbox" class="city-checkbox" value="' + city.CityName + '" /> ' + city.CityName +
+                                '</label><br />'
+                            );
+                        });
+
+                        cityContainer.show();
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred: " + error);
+                    },
+                    complete: function () {
+                        isProcessing = false;
+                    }
+                });
+            } else {
+
+                $('#cities-' + stateName).hide();
+            }
+        });
+    });
+</script>
+
+@*<script type="text/javascript">
+        $(document).ready(function () {
+            let isProcessing = false;
+
+            $('input[type="checkbox"]').on('change', function () {
+                if (isProcessing) return;
+
+                isProcessing = true;
+            alert("Checkbox clicked!");
+                   var selectedStates = $('input[type="checkbox"]:checked').map(function() {
+                    return $(this).val();
+                }).get();
+
+                $.ajax({
+                    url: '@Url.Action("GetDetails", "Details")',
+                    type: 'GET',
+            data: {
+
+
+                stateName: selectedStates.join(',')
+                    },
+            success: function (data) {
+                $("this").hide();
+                        alert("Data loaded successfully!");
+                        $('#detailsContainer').html(data);
+                    },
+                    complete: function () {
+                        isProcessing = false;
+                    }
+                });
+            });
+        });
+    </script>*@
+
+@*<script type="text/javascript">
+        $(document).ready(function () {
+            let isProcessing = false;
+
+            $('input[type="checkbox"]').change(function () {
+                if (isProcessing) return;
+
+                isProcessing = true;
+                alert("Checkbox clicked!");
+
+                var selectedStates = [];
+                $('input[type="checkbox"]:checked').each(function () {
+                    selectedStates.push($(this).val());
+                });
+
+                $.ajax({
+                    url: '@Url.Action("GetDetails1", "Details")',
+                    type: 'GET',
+                    data: {
+                        stateName: selectedStates.join(',')
+                    },
+                    success: function (data) {
+                        alert("Data loaded successfully!");
+                        $('#detailsContainer').html(data);
+                    },
+                    complete: function () {
+                        isProcessing = false;
+                    }
+                });
+            });
+        });
+
+    </script>
+    @*<script type="text/javascript">
+                $(document).ready(function () {
+
+                $('input[type="checkbox"]').change(function () {
+                alert("success");
+                    var selectedStates = [];
+                    $('input[type="checkbox"]:checked').each(function () {
+                        selectedStates.push($(this).val());
+                    });
+
+
+                    $.ajax({
+                        url: '@Url.Action("GetDetails", "Details")',
+                        type: 'GET',
+                        data: {
+                            stateName: selectedStates.join(',')
+                        },
+                        success: function (data) {
+                            alert("success");
+
+                            $('#detailsContainer').html(data);
+                        }
+                    });
+                });
+            });
+        </script>*@
+
+

@@ -1,0 +1,31 @@
+﻿body {
+    table, th, td table, th, td
+
+{
+    border: 1px solid white;
+    border-collapse: collapse;
+}
+
+th, td {
+    background-color: #96D4D4;
+}
+<style >
+.custom-form-container {
+    max-width: 400px; /* Adjust the maximum width as needed */
+    margin: 0 auto; /* Centers the container horizontally */
+}
+
+.custom-form-group {
+    margin-bottom: 15px; /* Adjust spacing as needed */
+}
+
+    .custom-form-group input {
+        width: 100%; /* Make the input field full width of the container */
+    }
+
+    .custom-form-group button {
+        width: 100%; /* Make the button full width of the container */
+    }
+
+</style >
+
